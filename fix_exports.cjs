@@ -32,25 +32,25 @@ files.forEach(file => {
 files.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let changed = false;
-  
+
   const importRegex = /import\s+\{\s*([A-Z][a-zA-Z0-9_]*)\s*\}\s+from\s+['"]([^'"]+)['"]/g;
-  
+
   content = content.replace(importRegex, (match, componentName, importPath) => {
     if (importPath.includes('pages/') || importPath.includes('components/') || importPath.startsWith('.') || importPath.startsWith('..')) {
-       if (componentName !== 'AppProvider' && componentName !== 'useApp' && !importPath.includes('context')) {
-         changed = true;
-         return `import ${componentName} from '${importPath}'`;
-       }
+      if (componentName !== 'AppProvider' && componentName !== 'useApp' && !importPath.includes('context')) {
+        changed = true;
+        return `import ${componentName} from '${importPath}'`;
+      }
     }
     return match;
   });
-  
+
   const multiImportRegex = /import\s+\{\s*([A-Z][a-zA-Z0-9_]*)\s*,\s*([A-Z][a-zA-Z0-9_]*)\s*\}\s+from\s+['"]([^'"]+)['"]/g;
   content = content.replace(multiImportRegex, (match, d1, d2, importPath) => {
-     if (importPath.includes('pages/') || importPath.includes('components/') || importPath.startsWith('.') || importPath.startsWith('..')) {
-         console.warn(`Need manual fix for multi-import in ${file}: ${match}`);
-     }
-     return match;
+    if (importPath.includes('pages/') || importPath.includes('components/') || importPath.startsWith('.') || importPath.startsWith('..')) {
+      console.warn(`Need manual fix for multi-import in ${file}: ${match}`);
+    }
+    return match;
   });
 
   if (changed) {
